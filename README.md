@@ -1,4 +1,6 @@
-#  Redsky IoT/GPS/Telematics
+![Aerospike](https://github.com/johncobb/redsky/blob/master/img/aerospike.png)
+
+##  Redsky IoT/GPS/Telematics
 
 ## Table of contents
 - [Overview](#overview)
