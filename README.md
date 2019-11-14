@@ -1,4 +1,4 @@
-![Aerospike](https://github.com/johncobb/redsky/blob/master/img/aerospike.png)
+[//]: ![Aerospike](https://github.com/johncobb/redsky/blob/master/img/aerospike.png)
 
 ##  Redsky IoT/GPS/Telematics
 
