@@ -10,9 +10,6 @@ class MessageFormat(Enum):
     ASCII = 0
     Binary = 1
 
-
-
-
 class GpsStatus(Enum):
     Valid = 'A'
     Invalid = 'V'
