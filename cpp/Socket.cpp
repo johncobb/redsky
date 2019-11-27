@@ -2,6 +2,11 @@
 #include <iostream>
 using namespace std;
 
+
+#ifndef MSG_CONFIRM
+#define MSG_CONFIRM 0
+#endif
+
 Socket::Socket() {
 
 }

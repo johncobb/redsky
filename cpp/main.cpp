@@ -6,18 +6,25 @@
 #include <iostream>
 #include <string.h>
 
+#include "Platform.hpp"
 #include "Socket.hpp"
 using namespace std;
 
 #define PI 3.14159
-#define MAX_LINES 64
-#define UDP_PORT 1337
+#define UDP_PORT 1721
+
+
+
+//https://github.com/johncobb/sam4s_telit/
 
 
 Socket server;
 
 int main () {
-	char buffer[MAX_LINES];
+	char buffer[MAXLINE];
+
+	cout << PLATFORM << endl;
+
 
 	try {
 		server = Socket(UDP_PORT);
@@ -27,10 +34,13 @@ int main () {
 		cout << "Buffer size: " << sizeof(server.buffer) << endl;
 
 		while(true) {
-			int len = server.receive(buffer, MAX_LINES);
+			int len = server.receive(buffer, MAXLINE);
 
 			if (len > 0) {
 				cout << "Bytes received: " << len << " port: " << server.cliaddr.sin_port << endl;
+
+				// string buff = buffer;
+
 				// cout << "Bytes received: " << len  << endl;
 				
 			}

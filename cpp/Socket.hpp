@@ -16,8 +16,10 @@
 #include <netdb.h>
 
 #define PORT 8080
-#define MAXLINE 1024
-#define MSG_CONFIRM 0
+#define MAXLINE 256
+
+
+// 
 
 using namespace std;
 
