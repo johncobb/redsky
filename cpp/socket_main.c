@@ -10,7 +10,7 @@
 
 #define PORT	 1721 
 #define MAXLINE 128 
-//#define MSG_CONFIRM 0
+#define MSG_CONFIRM 0
 
 // Driver code 
 int main() { 

@@ -4,18 +4,45 @@
 #include <sstream>
 #include <iterator>
 #include <iostream>
+#include <string.h>
 
-#include "Socket.h"
+#include "Socket.hpp"
 using namespace std;
 
 #define PI 3.14159
+#define MAX_LINES 64
+#define UDP_PORT 1337
 
-#define AREA_CIRCLE(radius) (PI*(radius*radius))
+
+Socket server;
 
 int main () {
+	char buffer[MAX_LINES];
 
-	Socket socket = Socket();
-	socket.setEndpointAddress("http://localhost");
-	cout << "Socket endpoint address: " << socket.getEndpointAddress() << endl;
+	try {
+		server = Socket(UDP_PORT);
 
+		cout << "Socket listeneing on port: " << server.port << endl;
+		cout << "Initialized: " << server.initialized << endl;
+		cout << "Buffer size: " << sizeof(server.buffer) << endl;
+
+		while(true) {
+			int len = server.receive(buffer, MAX_LINES);
+
+			if (len > 0) {
+				cout << "Bytes received: " << len << " port: " << server.cliaddr.sin_port << endl;
+				// cout << "Bytes received: " << len  << endl;
+				
+			}
+
+		}
+
+	} catch( const char* msg) {
+		cout << "Exception occured: " << msg << endl;
+		exit(EXIT_FAILURE); 
+	}
+
+	
+	
+        
 }

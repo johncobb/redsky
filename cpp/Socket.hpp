@@ -12,43 +12,41 @@
 #include <arpa/inet.h> 
 #include <netinet/in.h> 
 
+// research netdb.h
+#include <netdb.h>
+
 #define PORT 8080
 #define MAXLINE 1024
 #define MSG_CONFIRM 0
 
+using namespace std;
 
 class Socket {
 	public:
 		Socket();
-		Socket(const Socket& sck);
-		virtual ~Socket();
-		std::string name;
+		Socket(uint16_t port);
 
-		int socketfd;
+		virtual ~Socket();
+		int sockfd;
 		char buffer[MAXLINE];
-		std::string endpointAddress = "";
-		// struct socketaddr_in servaddr;
-		// struct socketaddr_in cliaddr;
+		bool initialized;
+		uint8_t socketFamily;
+		uint16_t inAddr;
+		uint16_t port;
+		struct sockaddr_in servaddr;
+		struct sockaddr_in cliaddr;
 		
 
-		void setEndpointAddress(std::string endpoint) {
-			endpointAddress = endpoint;
-		}
-
-		std::string getEndpointAddress() {
-			return endpointAddress;
-		}
-
-		uint32_t connect() {
-			
-		}
-
-
+		long receive(char *buffer, int max_size);
+	
 	private:
 
-	double myPrivateMethod() {
-		return 1.0;
-	}
+		long send(char *msg);
+		double myPrivateMethod() {
+			return 1.0;
+		}
+	
+	
 
 };
 
