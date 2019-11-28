@@ -20,10 +20,12 @@ using namespace std;
 
 Socket server;
 
-int main () {
-	char buffer[MAXLINE];
 
-	cout << PLATFORM << endl;
+int main () {
+	
+	char buffer[MAXLINE] = {0};
+
+	cout << "Platform: " << PLATFORM << endl;
 
 
 	try {
@@ -34,16 +36,8 @@ int main () {
 		cout << "Buffer size: " << sizeof(server.buffer) << endl;
 
 		while(true) {
+			memset(buffer, '\0', MAXLINE);
 			int len = server.receive(buffer, MAXLINE);
-
-			if (len > 0) {
-				cout << "Bytes received: " << len << " port: " << server.cliaddr.sin_port << endl;
-
-				// string buff = buffer;
-
-				// cout << "Bytes received: " << len  << endl;
-				
-			}
 
 		}
 
