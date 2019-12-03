@@ -40,6 +40,7 @@ class Socket {
 		
 
 		long receive(char *buffer, int max_size);
+		long receive_ex(uint8_t *buffer, int max_size);
 	
 	private:
 

@@ -29,11 +29,7 @@ Socket::Socket(uint16_t port):port(port)  {
 
         throw "Socket creation failed.";
     }
-
-	// Bind the socket with the server address 
-	// if ( bind(sockfd, (const struct sockaddr *)&servaddr, sizeof(servaddr)) < 0 ) {
-    //     throw "Socket bind failed.";
-	// } 
+    
  	if ( bind(sockfd, (struct sockaddr *)&servaddr, sizeof(Socket::servaddr)) < 0 ) {
         throw "Socket bind failed.";
 	}   
@@ -62,6 +58,22 @@ long Socket::receive(char *buffer, int max_size) {
 
     return n;
 
+}
+
+long Socket::receive_ex(uint8_t *buffer, int max_size) {
+    socklen_t len;
+    socklen_t n;
+
+    memset(buffer, 0, max_size);
+
+    n = recvfrom(sockfd, buffer, max_size, MSG_WAITALL, ( struct sockaddr *) &cliaddr, &len);
+    if (n > 0) {
+
+        cout << "bytes: " << n << endl;
+
+    }
+
+    return n;    
 }
 
 long Socket::send(char *msg) {
