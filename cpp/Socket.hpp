@@ -16,7 +16,7 @@
 #include <netdb.h>
 
 #define PORT 8080
-#define MAXLINE 256
+#define BUFFER_SIZE 128
 
 
 // 
@@ -30,7 +30,7 @@ class Socket {
 
 		virtual ~Socket();
 		int sockfd;
-		char buffer[MAXLINE];
+		char buffer[BUFFER_SIZE];
 		bool initialized;
 		uint8_t socketFamily;
 		uint16_t inAddr;
@@ -39,8 +39,7 @@ class Socket {
 		struct sockaddr_in cliaddr;
 		
 
-		long receive(char *buffer, int max_size);
-		long receive_ex(uint8_t *buffer, int max_size);
+		long receive(uint8_t *buffer, int max_size);
 	
 	private:
 

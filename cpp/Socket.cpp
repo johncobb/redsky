@@ -35,43 +35,13 @@ Socket::Socket(uint16_t port):port(port)  {
 	}   
 }
 
-long Socket::receive(char *buffer, int max_size) {
-    socklen_t len;
-    socklen_t n;
-
-    // n = recvfrom(sockfd, (char *)buffer, MAXLINE, MSG_WAITALL, ( struct sockaddr *) &cliaddr, &len);
-    memset(buffer, '0', max_size);
-
-    n = recvfrom(sockfd, buffer, max_size, MSG_WAITALL, ( struct sockaddr *) &cliaddr, &len);
-    if (n > 0) {
-
-        cout << "bytes: " << n << endl;
-
-
-        // std::hex << buffer[0] << buffer[1] << buffer[2] << buffer[3];
-
-        // hex << buffer[0];
-
-        // cout << endl;
-
-    }
-
-    return n;
-
-}
-
-long Socket::receive_ex(uint8_t *buffer, int max_size) {
+long Socket::receive(uint8_t *buffer, int max_size) {
     socklen_t len;
     socklen_t n;
 
     memset(buffer, 0, max_size);
 
     n = recvfrom(sockfd, buffer, max_size, MSG_WAITALL, ( struct sockaddr *) &cliaddr, &len);
-    if (n > 0) {
-
-        cout << "bytes: " << n << endl;
-
-    }
 
     return n;    
 }
