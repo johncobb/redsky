@@ -8,20 +8,25 @@
 
 #include "Platform.hpp"
 #include "Socket.hpp"
+#include "Enfora.hpp"
+
 using namespace std;
+
+void unitTestEnforaParsing();
+void runUnitTests();
 
 #define PI 3.14159
 #define UDP_PORT 1721
 #define MICROS_IN_MILLIS 1000
 #define MILLIS_IN_SECONDS 1000
 
-#define ENFORA_EVT_TIMED		1
-#define ENFORA_EVT_DIST 		2
-#define ENFORA_EVT_OPTO1 		31
-#define ENFORA_EVT_PWRUP 		50
+// #define ENFORA_EVT_TIMED		1
+// #define ENFORA_EVT_DIST 		2
+// #define ENFORA_EVT_OPTO1 		31
+// #define ENFORA_EVT_PWRUP 		50
 
-#define ENFORA_MSG_SHORT	22
-#define ENFORA_MSG_LONG		51
+// #define ENFORA_MSG_SHORT	22
+// #define ENFORA_MSG_LONG		51
 
 //https://github.com/johncobb/sam4s_telit/
 
@@ -180,6 +185,9 @@ void parse_device_msg(uint8_t *data, enfora_msg_t *msg, long len) {
 
 int main () {
 	
+	// runUnitTests();
+	// return 0;
+
 	enfora_msg_t enfora_msg;
 
 	char buffer[BUFFER_SIZE] = {0};
@@ -197,7 +205,9 @@ int main () {
 
 			long len = server.receive(msg_buffer, BUFFER_SIZE);
 			if (len > 0) {
-				parse_device_msg(msg_buffer, &enfora_msg, len);
+				// parse_device_msg(msg_buffer, &enfora_msg, len);
+				Enfora msg = Enfora(msg_buffer, len);
+				msg.parseMessage();
 			}
 
 			usleep(100*MICROS_IN_MILLIS); // 100 millis
@@ -208,8 +218,21 @@ int main () {
 		exit(EXIT_FAILURE); 
 	}
 
+
+
+
 	
 
 	
         
+}
+
+void runUnitTests() {
+	unitTestEnforaParsing();
+}
+
+void unitTestEnforaParsing() {
+	uint8_t b[5] = {'H', 'e', 'l', 'l', 'o'};
+	Enfora e = Enfora(b, 5);
+	e.parsingTest();
 }
