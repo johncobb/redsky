@@ -18,9 +18,6 @@
 #define PORT 8080
 #define BUFFER_SIZE 128
 
-
-// 
-
 using namespace std;
 
 class Socket {
