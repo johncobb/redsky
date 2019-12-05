@@ -1,17 +1,8 @@
 #ifndef ENFORA_H
 #define ENFORA_H
 
-#include <string>
-// Server side implementation of UDP client-server model 
-#include <stdio.h> 
-#include <stdlib.h> 
-#include <unistd.h> 
-#include <string.h> 
-#include <sys/types.h> 
-#include <sys/socket.h> 
-#include <arpa/inet.h> 
-#include <netinet/in.h> 
-
+#include <stdint.h> 
+#include "Gps.hpp"
 using namespace std;
 
 #define ENFORA_EVT_TIMED		1
@@ -36,40 +27,28 @@ class Enfora {
         uint8_t *data;
 		int len;
 		bool initialized;
+		Gps m_Gps;
 
-		uint32_t header;
-		uint32_t evt_code;
-		uint8_t modem_id[8];
-		uint64_t rtc;
-		uint8_t iocfg;
-		uint8_t iogpio;
-		uint8_t evt_cat;
+		uint32_t m_Header;
+		uint32_t m_EventType;
+		uint8_t m_ModemId[8];
+		uint64_t m_RTC;
+		uint8_t m_IOCFG;
+		uint8_t m_IOGPIO;
+		uint8_t m_EventCategory;
+		uint32_t m_NotifyType;
 
-		uint32_t gps_dte;
-		uint8_t gps_sts;
-		uint32_t gps_lat;
-		uint32_t gps_lng;
-		uint16_t gps_vel;
-		uint16_t gps_hdg;
-		uint32_t gps_tme;
-		uint32_t gps_alt;
-		uint8_t gps_sat;
-		uint32_t gps_odm;
-		
 		void parseMessage();
 		void parseMessage(uint8_t *data);
         void parse();
 		void parsingTest();
 
-
-	
 	private:
 
 		void parseMessageShort(uint8_t *data);
 		void parseMessageLong(uint8_t *data);
 		void logMessageBuffer(uint8_t *data, long len);
 		
-
 		double myPrivateMethod() {
 			return 1.0;
 		}

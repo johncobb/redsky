@@ -1,11 +1,30 @@
 #include "Enfora.hpp"
+// #include "Gps.hpp"
 #include <iostream>
+
 
 using namespace std;
 
 
-Enfora::Enfora() {
+/*
+ * https://github.com/johncobb/sam4s_telit/
+ * https://github.com/johncobb/echobase_sam4e16c/blob/master/src/wan/wan.c
+ * 
+ * enfora standard message
+ * len: 51
+ * 
+ * enfora powerup message
+ * len: 22
+ * 
+ * header: 	4
+ * parm1: 	4
+ * mdmid: 	8
+ * rtc:		6
+ * 
+*/
 
+Enfora::Enfora() {
+	m_Gps = Gps();
 }
 
 Enfora::Enfora(uint8_t *data, int len):data(data), len(len) {
@@ -23,27 +42,27 @@ void Enfora::parseMessage() {
 void Enfora::parseMessage(uint8_t *data) {
     logMessageBuffer(data, len);
 
-	header = (((unsigned long)data[0]) << 24) | (((unsigned long)data[1]) << 16) | (((unsigned long)data[2]) << 8) | (unsigned long)data[3];
-	evt_code = (((unsigned long)data[4]) << 24) | (((unsigned long)data[5]) << 16) | (((unsigned long)data[6]) << 8) | (unsigned long)data[7];
-	modem_id[0] = data[8];
-	modem_id[1] = data[9];
-	modem_id[2] = data[10];
-	modem_id[3] = data[11];
-	modem_id[4] = data[12];
-	modem_id[5] = data[13];
-	modem_id[6] = data[14];
-	modem_id[7] = data[15];
+	m_Header = (((unsigned long)data[0]) << 24) | (((unsigned long)data[1]) << 16) | (((unsigned long)data[2]) << 8) | (unsigned long)data[3];
+	m_EventType = (((unsigned long)data[4]) << 24) | (((unsigned long)data[5]) << 16) | (((unsigned long)data[6]) << 8) | (unsigned long)data[7];
+	m_ModemId[0] = data[8];
+	m_ModemId[1] = data[9];
+	m_ModemId[2] = data[10];
+	m_ModemId[3] = data[11];
+	m_ModemId[4] = data[12];
+	m_ModemId[5] = data[13];
+	m_ModemId[6] = data[14];
+	m_ModemId[7] = data[15];
 	
-	printf("msg->header: %u\r\n", header);
-	printf("msg->evt_code: %u\r\n", evt_code);
-	printf("msg->modem_id: %s\r\n", modem_id);
+	printf("msg->m_Header: %u\r\n", m_Header);
+	printf("msg->m_EventType: %u\r\n", m_EventType);
+	printf("msg->m_ModemId: %s\r\n", m_ModemId);
 
-	if (evt_code == ENFORA_EVT_PWRUP) {
+	if (m_EventType == ENFORA_EVT_PWRUP) {
 		cout << "POWERUP" << endl;
-	} else if (evt_code == ENFORA_EVT_OPTO1) {
+	} else if (m_EventType == ENFORA_EVT_OPTO1) {
 		cout << "ENFORA_EVT_OPTO1" << endl;
 	}
-	// printf("msg->rtc: %llu\r\n", msg->rtc);	
+	// printf("msg->m_RTC: %llu\r\n", msg->m_RTC);	
 	
 	// spaghetti code for processing enfora messages
 	try {
@@ -63,32 +82,32 @@ void Enfora::parseMessage(uint8_t *data) {
 
 void Enfora::parseMessageShort(uint8_t *data) {
 
-	if (evt_code == ENFORA_EVT_PWRUP) {
-		rtc = (((unsigned long)data[16]) << 40) | (((unsigned long)data[17]) << 32) | (((unsigned long)data[18]) << 24) | (((unsigned long)data[19]) << 16) | (((unsigned long)data[20]) << 8) | (unsigned long)data[21];
+	if (m_EventType == ENFORA_EVT_PWRUP) {
+		m_RTC = (((unsigned long)data[16]) << 40) | (((unsigned long)data[17]) << 32) | (((unsigned long)data[18]) << 24) | (((unsigned long)data[19]) << 16) | (((unsigned long)data[20]) << 8) | (unsigned long)data[21];
 	} else {
-		iocfg = (uint8_t) data[22];
-		iogpio = (uint8_t) data[23];
-		evt_cat = (uint8_t) data[24];
+		m_IOCFG = (uint8_t) data[22];
+		m_IOGPIO = (uint8_t) data[23];
+		m_EventCategory = (uint8_t) data[24];
 	}
 
 }
 
 void Enfora::parseMessageLong(uint8_t *data) {
 	
-	iocfg = (uint8_t) data[16];
-	iogpio = (uint8_t) data[17];
-	evt_cat = (uint8_t) data[18];
-	gps_dte = (((uint8_t)data[19]) << 16) | (((uint8_t)data[20]) << 8) | (uint8_t)data[21];
-	gps_sts = (uint8_t)data[22];
-	gps_lat = (((uint32_t)data[23]) << 16) | (((uint32_t)data[24]) << 8) | (uint32_t)data[25];
-	gps_lng = (((uint32_t)data[26]) << 24) | (((uint32_t)data[27]) << 16) | (((uint32_t)data[28]) << 8) | (uint32_t)data[29];
-	gps_vel = (((uint16_t)data[30]) << 8) | (uint16_t)data[31];
-	gps_hdg = (((uint16_t)data[32]) << 8) | (uint16_t)data[33];
-	gps_tme = (((uint32_t)data[34]) << 16) | (((uint32_t)data[35]) << 8) | (uint32_t)data[36];
-	gps_alt = (((uint32_t)data[37]) << 16) | (((uint32_t)data[38]) << 8) | (uint32_t)data[39];
-	gps_sat = (uint8_t)data[40];
-	gps_odm = (((uint32_t)data[41]) << 24) | (((uint32_t)data[42]) << 16) | (((uint32_t)data[43]) << 8) | (uint32_t)data[44];
-	rtc = (((unsigned long)data[45]) << 40) | (((unsigned long)data[46]) << 32) | (((unsigned long)data[47]) << 24) | (((unsigned long)data[48]) << 16) | (((unsigned long)data[49]) << 8) | (unsigned long)data[50];
+	m_IOCFG = (uint8_t) data[16];
+	m_IOGPIO = (uint8_t) data[17];
+	m_EventCategory = (uint8_t) data[18];
+	m_Gps.m_Position.date = (((uint8_t)data[19]) << 16) | (((uint8_t)data[20]) << 8) | (uint8_t)data[21];
+	m_Gps.m_Position.status = (uint8_t)data[22];
+	m_Gps.m_Position.latitude = (((uint32_t)data[23]) << 16) | (((uint32_t)data[24]) << 8) | (uint32_t)data[25];
+	m_Gps.m_Position.longitude = (((uint32_t)data[26]) << 24) | (((uint32_t)data[27]) << 16) | (((uint32_t)data[28]) << 8) | (uint32_t)data[29];
+	m_Gps.m_Position.velocity = (((uint16_t)data[30]) << 8) | (uint16_t)data[31];
+	m_Gps.m_Position.heading = (((uint16_t)data[32]) << 8) | (uint16_t)data[33];
+	m_Gps.m_Position.time = (((uint32_t)data[34]) << 16) | (((uint32_t)data[35]) << 8) | (uint32_t)data[36];
+	m_Gps.m_Position.altitude = (((uint32_t)data[37]) << 16) | (((uint32_t)data[38]) << 8) | (uint32_t)data[39];
+	m_Gps.m_Position.satellites = (uint8_t)data[40];
+	m_Gps.m_Position.odometer = (((uint32_t)data[41]) << 24) | (((uint32_t)data[42]) << 16) | (((uint32_t)data[43]) << 8) | (uint32_t)data[44];
+	m_RTC = (((unsigned long)data[45]) << 40) | (((unsigned long)data[46]) << 32) | (((unsigned long)data[47]) << 24) | (((unsigned long)data[48]) << 16) | (((unsigned long)data[49]) << 8) | (unsigned long)data[50];
 
 }
 
