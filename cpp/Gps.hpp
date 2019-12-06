@@ -1,15 +1,10 @@
 /**
  * @file Gps.hpp
  *
- * @brief This message displayed in Doxygen Files index
- *
- * @ingroup PackageName
- * (Note: this needs exactly one @defgroup somewhere)
- *
  * @author John Cobb
  * Contact: emailjohncobb@gmail.com
+ * Github: github.com/johncobb
  * Tweet: @johncobbtweets
- *
  */
 
 #ifndef GPS_H
@@ -31,21 +26,18 @@ class Gps {
 		void parse(uint8_t *data, int len);
 		void parsingTest();
 
-		typedef struct {
-			uint32_t date;
-			uint8_t status;
-			uint32_t longitude;
-			uint32_t latitude;
-			uint16_t velocity;
-			uint16_t heading;
-			uint32_t time;
-			uint32_t altitude;
-			uint8_t satellites;
-			uint32_t odometer;
 
-		} position_t;
+		uint32_t date;
+		uint8_t status;
+		uint32_t longitude;
+		uint32_t latitude;
+		uint16_t velocity;
+		uint16_t heading;
+		uint32_t time;
+		uint32_t altitude;
+		uint8_t satellites;
+		uint32_t odometer;
 
-		position_t m_Position;
 
 		virtual ~Gps();
 

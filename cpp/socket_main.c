@@ -1,3 +1,12 @@
+/**
+ * @file socket_main.c
+ *
+ * @author John Cobb
+ * Contact: emailjohncobb@gmail.com
+ * Github: github.com/johncobb
+ * Tweet: @johncobbtweets
+ */
+
 // Server side implementation of UDP client-server model 
 #include <stdio.h> 
 #include <stdlib.h> 

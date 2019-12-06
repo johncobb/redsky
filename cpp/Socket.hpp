@@ -1,3 +1,12 @@
+/**
+ * @file Socket.hpp
+ *
+ * @author John Cobb
+ * Contact: emailjohncobb@gmail.com
+ * Github: github.com/johncobb
+ * Tweet: @johncobbtweets
+ */
+
 #ifndef SOCKET_H
 #define SOCKET_H
 
@@ -11,7 +20,7 @@
 #include <sys/socket.h> 
 #include <arpa/inet.h> 
 #include <netinet/in.h> 
-
+#include <stdint.h> 
 // research netdb.h
 #include <netdb.h>
 
@@ -20,11 +29,16 @@
 
 using namespace std;
 
+typedef struct {
+	uint16_t addr;
+	uint16_t port;
+} socket_connection_t;
+
 class Socket {
 	public:
 		Socket();
 		Socket(uint16_t port);
-
+		
 		virtual ~Socket();
 		int sockfd;
 		char buffer[BUFFER_SIZE];
@@ -35,18 +49,14 @@ class Socket {
 		struct sockaddr_in servaddr;
 		struct sockaddr_in cliaddr;
 		
-
-		long receive(uint8_t *buffer, int max_size);
+		long receive(uint8_t *buffer, unsigned long max_size);
 	
 	private:
-
 		long send(char *msg);
+
 		double myPrivateMethod() {
 			return 1.0;
 		}
-	
-	
-
 };
 
 #endif
