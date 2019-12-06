@@ -1,3 +1,12 @@
+/**
+ * @file Gps.cpp
+ *
+ * @author John Cobb
+ * Contact: emailjohncobb@gmail.com
+ * Github: github.com/johncobb
+ * Tweet: @johncobbtweets
+ */
+
 #include "Gps.hpp"
 #include <iostream>
 
@@ -10,7 +19,6 @@ Gps::Gps() {
 Gps::Gps(uint8_t *data, int len):data(data), len(len) {
 
 }
-
 
 void Gps::parse() {
     parse(data, len);
@@ -40,9 +48,9 @@ void Gps::parsingTest() {
 	// logMessageBuffer(data, len);
 
     cout << "Gps::parse(data: " << data << " len: " << len << ")" << endl;
-	cout << "GPS::m_Position: lat: " << m_Position.latitude
-									 << " lng: " << m_Position.longitude
-									 << " vel: " << m_Position.velocity 
+	cout << "GPS::m_Position: lat: " << latitude
+									 << " lng: " << longitude
+									 << " vel: " << velocity 
 									 << endl;
 }
 
