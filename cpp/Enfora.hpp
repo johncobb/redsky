@@ -32,6 +32,8 @@ class Enfora : public MessageBase {
 	public:
 		Enfora();
 		Enfora(uint8_t *data, unsigned long len);
+		Enfora(uint8_t *data, unsigned long len, int x);
+		Enfora(uint8_t *data, unsigned long len, socket_info_t *socketInfo);
 		// todo: the following constructor is ability to track message by ip and port
 		// allowing us to prune old/stale connections and maintain an updated list
 		// of connections
@@ -46,15 +48,16 @@ class Enfora : public MessageBase {
 		Gps gps;
 
 		uint32_t header;
-		uint32_t eventType;
-		uint8_t modemId[8];
-		uint64_t realTimeClock;
+		uint32_t event_type;
+		uint8_t modem_id[8];
+		uint64_t rtc;
 		uint8_t iocfg;
 		uint8_t iogpio;
-		uint8_t eventCategory;
+		uint8_t event_cat;
 		uint32_t odometer;
 		// uint32_t notifyType; // not yet implemented (tbd)
 
+		uint64_t parseDeviceId();
 		void parseMessage();
 		void parseMessage(uint8_t *data);
         void parse();

@@ -41,7 +41,7 @@ void unitTestGpsParsing();
 void runUnitTests();
 void runPerformanceTest();
 
-
+void sendUdpResponse(socket_info_t sinfo);
 
 static clock_t clock_time;
 static clock_t perf_start;
@@ -53,25 +53,8 @@ vector <MessageBase> connections;
 
 uint8_t msg_buffer[128] = {0};
 
-void log_msg_buffer(uint8_t *data, uint8_t len) {
-
-	printf("len: %d msg: ", len);
-
-	for (int i=0; i<len; i++) {
-		printf("%02x", data[i]);
-
-		// only colon between bytes ... skip the last
-		if (i<(len-1)) {
-			printf(":");
-		} 
-	}
-	printf("\r\n");
-}
-
-
 int main () {
 	
-
 	// runPerformanceTest();
 	// return 0;
 
@@ -89,17 +72,22 @@ int main () {
 		cout << "Buffer size: " << sizeof(server.buffer) << endl;
 
 		while(true) {
+			socket_info_t sck_info;
 
-			long len = server.receive(msg_buffer, BUFFER_SIZE);
+			long len = server.receiveFrom(msg_buffer, BUFFER_SIZE, &sck_info);
+			
 			// cout << "received len: " << len << endl;
 			cout << "log clock: " << clock() << endl;
-			if (len > 0) {
-				//cout << "HERE IS THE LENGTH: " << len << endl;
-				Enfora msg = Enfora(msg_buffer, len);
+			if (sck_info.len > 0) {
+
+				Enfora msg = Enfora(msg_buffer, len, &sck_info);
+				
 				msg.parseMessage();
 				connections.push_back(msg);
+				cout << "log sck id: " << msg.getSocketInfo()->id << endl;
 
 				cout << "log connections: " << connections.size() << endl;
+				// sendUdpResponse(sinfo);
 			}
 
 			usleep(100*MICROS_IN_MILLIS); // 100 millis
@@ -110,6 +98,11 @@ int main () {
 		exit(EXIT_FAILURE); 
 	}
  
+}
+
+void sendUdpResponse(socket_info_t sck_info) {
+	string cmd_at = "AT$MSGSND=0,\"AT\0D\"";
+	server.send(cmd_at.c_str(), cmd_at.size(), sck_info.addr);
 }
 
 void runUnitTests() {
