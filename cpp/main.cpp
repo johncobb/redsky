@@ -22,8 +22,8 @@
 
 #include "Platform.hpp"
 #include "Socket.hpp"
-#include "MessageBase.hpp"
-#include "Enfora.hpp"
+#include "EndpointBase.hpp"
+#include "Endpoint.hpp"
 #include "Gps.hpp"
 
 using namespace std;
@@ -36,19 +36,19 @@ using namespace std;
 /*
  * Unit test scaffolding
  */
-void unitTestEnforaParsing();
+void unitTestEndpointParsing();
 void unitTestGpsParsing();
 void runUnitTests();
 void runPerformanceTest();
 
-void sendUdpResponse(socket_info_t sinfo);
+void sendUdpResponse(endpoint_t sinfo);
 
 static clock_t clock_time;
 static clock_t perf_start;
 static clock_t perf_end;
 
 Socket server;
-vector <MessageBase> connections;
+vector <EndpointBase> connections;
 
 
 uint8_t msg_buffer[128] = {0};
@@ -72,7 +72,7 @@ int main () {
 		cout << "Buffer size: " << sizeof(server.buffer) << endl;
 
 		while(true) {
-			socket_info_t sck_info;
+			endpoint_t sck_info;
 
 			long len = server.receiveFrom(msg_buffer, BUFFER_SIZE, &sck_info);
 			
@@ -80,11 +80,11 @@ int main () {
 			cout << "log clock: " << clock() << endl;
 			if (sck_info.len > 0) {
 
-				Enfora msg = Enfora(msg_buffer, len, &sck_info);
+				Endpoint msg = Endpoint(msg_buffer, len, &sck_info);
 				
 				msg.parseMessage();
 				connections.push_back(msg);
-				cout << "log sck id: " << msg.getSocketInfo()->id << endl;
+				cout << "log sck id: " << msg.getEndpoint()->id << endl;
 
 				cout << "log connections: " << connections.size() << endl;
 				// sendUdpResponse(sinfo);
@@ -100,22 +100,42 @@ int main () {
  
 }
 
-void sendUdpResponse(socket_info_t sck_info) {
+int findClientByEndpoint(sockaddr_in endpoint) {
+
+	
+	// for (auto &m : connections) {
+	// 	if (m.getEndpoint()->len == 0) {
+	// 		cout << "we found the connection" << endl;
+	// 	}
+	// }
+
+	for (int i=0; i<connections.size(); i++) {
+		EndpointBase msg = connections[i];
+		cout << msg.getEndpoint()->id << endl;
+		return i;
+	}
+
+	return -1;
+	
+	
+}
+
+void sendUdpResponse(endpoint_t sck_info) {
 	string cmd_at = "AT$MSGSND=0,\"AT\0D\"";
 	server.send(cmd_at.c_str(), cmd_at.size(), sck_info.addr);
 }
 
 void runUnitTests() {
 	
-	unitTestEnforaParsing();
+	unitTestEndpointParsing();
 	usleep(100); // let system breath or we will overwrite cout buffer
 	unitTestGpsParsing();
 	
 }
 
-void unitTestEnforaParsing() {
+void unitTestEndpointParsing() {
 	uint8_t b[5] = {'H', 'e', 'l', 'l', 'o'};
-	Enfora e = Enfora(b, 5);
+	Endpoint e = Endpoint(b, 5);
 	e.parsingTest();
 }
 

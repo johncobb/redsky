@@ -30,10 +30,10 @@ using namespace std;
 
 // https://adaickalavan.github.io/programming/udp-socket-programming-in-cpp-and-python/
 typedef struct {
-	long len;
 	uint64_t id;
 	sockaddr_in addr;
-} socket_info_t;
+	long len;
+} endpoint_t;
 
 
 class Socket {
@@ -51,7 +51,7 @@ class Socket {
 		struct sockaddr_in servaddr;
 		struct sockaddr_in cliaddr;
 		long receiveFrom(uint8_t *buffer, int max);
-		long receiveFrom(uint8_t *buffer, int max, socket_info_t *info);
+		long receiveFrom(uint8_t *buffer, int max, endpoint_t *info);
 
 		// TODO: New code
 		// sockaddr_in receiveFrom(uint8_t* buffer, int len, int flags);

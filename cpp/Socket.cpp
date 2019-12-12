@@ -43,22 +43,14 @@ Socket::Socket(uint16_t port):port(port)  {
     initialized = true;
 }
 
+// using this receiveFrom prevents us from sending a response
+// as we do not record the client address
 long Socket::receiveFrom(uint8_t *buffer, int max) {
-    socklen_t len;
 
-    // reset buffer
-    memset(buffer, 0, max);
-    
-    long bytes = (long) recvfrom(sockfd, buffer, max, MSG_WAITALL, ( struct sockaddr *) &cliaddr, &len);
-    
-    if (bytes < 0) {
-        throw "Socket recvfrom failed.";
-    }
-
-    return bytes;
+    return receiveFrom(buffer, max, NULL);
 }
 
-long Socket::receiveFrom(uint8_t *buffer, int max, socket_info_t *info) {
+long Socket::receiveFrom(uint8_t *buffer, int max, endpoint_t *info) {
     socklen_t len;
 
     // reset buffer
@@ -70,9 +62,12 @@ long Socket::receiveFrom(uint8_t *buffer, int max, socket_info_t *info) {
         throw "Socket recvfrom failed.";
     }
     
-    info->addr.sin_addr = cliaddr.sin_addr;
-    info->addr.sin_port = cliaddr.sin_port;
-    info->len = bytes;
+    if (info != NULL) {
+        info->addr.sin_addr = cliaddr.sin_addr;
+        info->addr.sin_port = cliaddr.sin_port;
+        info->len = bytes;
+    }
+
 
 
     return bytes;    
@@ -106,7 +101,7 @@ void Socket::parseHumanReadableIp() {
 
     /*
      * let's have some fun here and convert s_addr to a human readable ip
-     * todo: optimize this away into diagnostics loggin that can be toggled
+     * todo: optimize this away into diagnostics logging that can be toggled
      * on and off when an observer attaches to diagnostics port
      * 
      */

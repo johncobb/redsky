@@ -1,5 +1,5 @@
 /**
- * @file Enfora.hpp
+ * @file Endpoint.hpp
  *
  * @author John Cobb
  * Contact: emailjohncobb@gmail.com
@@ -7,39 +7,39 @@
  * Tweet: @johncobbtweets
  */
 
-#ifndef ENFORA_H
-#define ENFORA_H
+#ifndef Endpoint_H
+#define Endpoint_H
 
 #include <stdint.h> 
-#include "MessageBase.hpp"
+#include "EndpointBase.hpp"
 #include "Gps.hpp"
 using namespace std;
 
-#define ENFORA_EVT_TIMED		1
-#define ENFORA_EVT_DIST 		2
-#define ENFORA_EVT_OPTO1 		31
-#define ENFORA_EVT_PWRUP 		50
+#define Endpoint_EVT_TIMED		1
+#define Endpoint_EVT_DIST 		2
+#define Endpoint_EVT_OPTO1 		31
+#define Endpoint_EVT_PWRUP 		50
 
-#define ENFORA_MSG_SHORT	22
-#define ENFORA_MSG_LONG		51
+#define Endpoint_MSG_SHORT	22
+#define Endpoint_MSG_LONG		51
 
 /*
-enfora standard message
+Endpoint standard message
 len: 51
 */
 
-class Enfora : public MessageBase {
+class Endpoint : public EndpointBase {
 	public:
-		Enfora();
-		Enfora(uint8_t *data, unsigned long len);
-		Enfora(uint8_t *data, unsigned long len, int x);
-		Enfora(uint8_t *data, unsigned long len, socket_info_t *socketInfo);
+		Endpoint();
+		Endpoint(uint8_t *data, unsigned long len);
+		Endpoint(uint8_t *data, unsigned long len, int x);
+		Endpoint(uint8_t *data, unsigned long len, endpoint_t *endpoint);
 		// todo: the following constructor is ability to track message by ip and port
 		// allowing us to prune old/stale connections and maintain an updated list
 		// of connections
-		// Enfora(uint8_t *data, unsigned long len, uint16_t addr, uint16_t port);
+		// Endpoint(uint8_t *data, unsigned long len, uint16_t addr, uint16_t port);
 
-		virtual ~Enfora();
+		virtual ~Endpoint();
         uint8_t *data;
 		unsigned long len;
 		uint16_t addr;
@@ -57,7 +57,7 @@ class Enfora : public MessageBase {
 		uint32_t odometer;
 		// uint32_t notifyType; // not yet implemented (tbd)
 
-		uint64_t parseDeviceId();
+		uint64_t parseEndpointId();
 		void parseMessage();
 		void parseMessage(uint8_t *data);
         void parse();

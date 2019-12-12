@@ -1,5 +1,5 @@
 /**
- * @file Enfora.hpp
+ * @file Endpoint.hpp
  *
  * @author John Cobb
  * Contact: emailjohncobb@gmail.com
@@ -7,24 +7,24 @@
  * Tweet: @johncobbtweets
  */
 
-#ifndef MESSAGEBASE_H
-#define MESSAGEBASE_H
+#ifndef EndpointBase_H
+#define EndpointBase_H
 
 #include <stdint.h> 
 #include "Socket.hpp"
 
 using namespace std;
 
-class MessageBase {
+class EndpointBase {
 
 
 	public:
 		// todo: research initializer list for base class
-		// MessageBase();
-		// MessageBase(socket_info_t *info);
+		// EndpointBase();
+		// EndpointBase(endpoint_t *info);
 
-		socket_info_t * getSocketInfo() {
-			return socketInfo;
+		endpoint_t * getEndpoint() {
+			return endpoint;
 		}
 
 		/* template method */
@@ -33,10 +33,10 @@ class MessageBase {
 		}
 
 	protected:
-		socket_info_t *socketInfo;
+		endpoint_t *endpoint;
 
-		void setSocketInfo(socket_info_t *info) {
-			socketInfo = info;
+		void setEndpoint(endpoint_t *info) {
+			endpoint = info;
 		}
 
 		/* template method */

@@ -1,5 +1,5 @@
 /**
- * @file Enfora.cpp
+ * @file Endpoint.cpp
  *
  * @author John Cobb
  * Contact: emailjohncobb@gmail.com
@@ -7,7 +7,7 @@
  * Tweet: @johncobbtweets
  */
 
-#include "Enfora.hpp"
+#include "Endpoint.hpp"
 // #include "Gps.hpp"
 #include <iostream>
 
@@ -21,10 +21,10 @@ using namespace std;
  * 
  * https://github.com/johncobb/echobase_sam4e16c/blob/master/src/wan/wan.c
  * 
- * enfora standard message
+ * Endpoint standard message
  * len: 51
  * 
- * enfora powerup message
+ * Endpoint powerup message
  * len: 22
  * 
  * header: 	4
@@ -34,24 +34,24 @@ using namespace std;
  * 
 */
 
-Enfora::Enfora() {
+Endpoint::Endpoint() {
 	gps = Gps();
 }
 
-Enfora::Enfora(uint8_t *data, unsigned long len):data(data), len(len) {
+Endpoint::Endpoint(uint8_t *data, unsigned long len):data(data), len(len) {
 
 }
 
-Enfora::Enfora(uint8_t *data, unsigned long len, socket_info_t *socketInfo):data(data), len(len) {
-	// socketInfo = socketInfo;
-	setSocketInfo(socketInfo);
-	parseDeviceId();
+Endpoint::Endpoint(uint8_t *data, unsigned long len, endpoint_t *endpoint):data(data), len(len) {
+	// endpoint = endpoint;
+	setEndpoint(endpoint);
+	parseEndpointId();
 }
 
-uint64_t Enfora::parseDeviceId() {
+uint64_t Endpoint::parseEndpointId() {
 
-	if (socketInfo->len >16) {
-		socketInfo->id = (((uint64_t)data[8]) << 56) | 
+	if (endpoint->len >16) {
+		endpoint->id = (((uint64_t)data[8]) << 56) | 
 						(((uint64_t)data[9]) << 48) | 
 						(((uint64_t)data[10]) << 40) | 
 						(((uint64_t)data[11]) << 32) | 
@@ -59,7 +59,7 @@ uint64_t Enfora::parseDeviceId() {
 						(((uint64_t)data[13]) << 16) | 
 						(((uint64_t)data[14]) << 8) | 
 						(uint64_t)data[15];
-		return socketInfo->id;
+		return endpoint->id;
 	} else {
 		return 0;
 	}
@@ -67,23 +67,23 @@ uint64_t Enfora::parseDeviceId() {
 
 
 
-void Enfora::parse() {
-    cout << "Enfora::parse()" << endl;
+void Endpoint::parse() {
+    cout << "Endpoint::parse()" << endl;
 }
 
-void Enfora::parseMessage() {
+void Endpoint::parseMessage() {
 
 	char ip[12];
 	memset(ip, 0, 12);
 
-	strcpy(ip, (char*)inet_ntoa((struct in_addr)getSocketInfo()->addr.sin_addr));
+	strcpy(ip, (char*)inet_ntoa((struct in_addr)getEndpoint()->addr.sin_addr));
 
-	cout << "log client addr: " << ip << ":" << getSocketInfo()->addr.sin_port << endl;
+	cout << "log client addr: " << ip << ":" << getEndpoint()->addr.sin_port << endl;
 
     parseMessage(data);
 }
 
-void Enfora::parseMessage(uint8_t *data) {
+void Endpoint::parseMessage(uint8_t *data) {
     logMessageBuffer(data, len);
 
 	header = (((unsigned long)data[0]) << 24) | (((unsigned long)data[1]) << 16) | (((unsigned long)data[2]) << 8) | (unsigned long)data[3];
@@ -101,21 +101,21 @@ void Enfora::parseMessage(uint8_t *data) {
 	printf("log msg-type: %u\r\n", event_type);
 	printf("log modem-id: %s\r\n", modem_id);
 
-	if (event_type == ENFORA_EVT_PWRUP) {
+	if (event_type == Endpoint_EVT_PWRUP) {
 		cout << "log evt: POWERUP" << endl;
-	} else if (event_type == ENFORA_EVT_OPTO1) {
-		cout << "log evt: ENFORA_EVT_OPTO1" << endl;
+	} else if (event_type == Endpoint_EVT_OPTO1) {
+		cout << "log evt: Endpoint_EVT_OPTO1" << endl;
 	} else {
 		cout << "log evt: OTHER" << endl;
 	}
 	// printf("msg->realTimeClock: %llu\r\n", msg->realTimeClock);	
 	
-	// spaghetti code for processing enfora messages
+	// spaghetti code for processing Endpoint messages
 	try {
 	
-		if (len == ENFORA_MSG_SHORT) {
+		if (len == Endpoint_MSG_SHORT) {
 			parseMessageShort(data);
-		} else if (len == ENFORA_MSG_LONG) {
+		} else if (len == Endpoint_MSG_LONG) {
 			parseMessageLong(data);
 		} else {
 		
@@ -126,9 +126,9 @@ void Enfora::parseMessage(uint8_t *data) {
 	}
 }
 
-void Enfora::parseMessageShort(uint8_t *data) {
+void Endpoint::parseMessageShort(uint8_t *data) {
 
-	if (event_type == ENFORA_EVT_PWRUP) {
+	if (event_type == Endpoint_EVT_PWRUP) {
 		rtc = (((unsigned long)data[16]) << 40) | (((unsigned long)data[17]) << 32) | (((unsigned long)data[18]) << 24) | (((unsigned long)data[19]) << 16) | (((unsigned long)data[20]) << 8) | (unsigned long)data[21];
 	} else {
 		iocfg = (uint8_t) data[22];
@@ -138,7 +138,7 @@ void Enfora::parseMessageShort(uint8_t *data) {
 
 }
 
-void Enfora::parseMessageLong(uint8_t *data) {
+void Endpoint::parseMessageLong(uint8_t *data) {
 	
 	iocfg = (uint8_t) data[16];
 	iogpio = (uint8_t) data[17];
@@ -158,7 +158,7 @@ void Enfora::parseMessageLong(uint8_t *data) {
 
 }
 
-void Enfora::logMessageBuffer(uint8_t *data, unsigned long len) {
+void Endpoint::logMessageBuffer(uint8_t *data, unsigned long len) {
 
 	printf("log len: %ld msg: ", len);
 
@@ -174,11 +174,11 @@ void Enfora::logMessageBuffer(uint8_t *data, unsigned long len) {
 
 }
 
-void Enfora::parsingTest() {
-    cout << "Enfora::parse(data: " << data << " len: " << len << ")" << endl;
+void Endpoint::parsingTest() {
+    cout << "Endpoint::parse(data: " << data << " len: " << len << ")" << endl;
 }
 
-Enfora::~Enfora() {
+Endpoint::~Endpoint() {
 
 }
 
