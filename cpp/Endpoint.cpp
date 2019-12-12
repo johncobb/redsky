@@ -101,10 +101,10 @@ void Endpoint::parseMessage(uint8_t *data) {
 	printf("log msg-type: %u\r\n", event_type);
 	printf("log modem-id: %s\r\n", modem_id);
 
-	if (event_type == Endpoint_EVT_PWRUP) {
+	if (event_type == ENDPOINT_EVT_PWRUP) {
 		cout << "log evt: POWERUP" << endl;
-	} else if (event_type == Endpoint_EVT_OPTO1) {
-		cout << "log evt: Endpoint_EVT_OPTO1" << endl;
+	} else if (event_type == ENDPOINT_EVT_OPTO1) {
+		cout << "log evt: ENDPOINT_EVT_OPTO1" << endl;
 	} else {
 		cout << "log evt: OTHER" << endl;
 	}
@@ -113,9 +113,9 @@ void Endpoint::parseMessage(uint8_t *data) {
 	// spaghetti code for processing Endpoint messages
 	try {
 	
-		if (len == Endpoint_MSG_SHORT) {
+		if (len == ENDPOINT_MSG_SHORT) {
 			parseMessageShort(data);
-		} else if (len == Endpoint_MSG_LONG) {
+		} else if (len == ENDPOINT_MSG_LONG) {
 			parseMessageLong(data);
 		} else {
 		
@@ -128,7 +128,7 @@ void Endpoint::parseMessage(uint8_t *data) {
 
 void Endpoint::parseMessageShort(uint8_t *data) {
 
-	if (event_type == Endpoint_EVT_PWRUP) {
+	if (event_type == ENDPOINT_EVT_PWRUP) {
 		rtc = (((unsigned long)data[16]) << 40) | (((unsigned long)data[17]) << 32) | (((unsigned long)data[18]) << 24) | (((unsigned long)data[19]) << 16) | (((unsigned long)data[20]) << 8) | (unsigned long)data[21];
 	} else {
 		iocfg = (uint8_t) data[22];

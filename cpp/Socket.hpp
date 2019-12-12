@@ -33,6 +33,7 @@ typedef struct {
 	uint64_t id;
 	sockaddr_in addr;
 	long len;
+	clock_t timestamp;
 } endpoint_t;
 
 

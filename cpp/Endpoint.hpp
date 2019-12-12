@@ -7,21 +7,21 @@
  * Tweet: @johncobbtweets
  */
 
-#ifndef Endpoint_H
-#define Endpoint_H
+#ifndef ENDPOINT_H
+#define ENDPOINT_H
 
 #include <stdint.h> 
 #include "EndpointBase.hpp"
 #include "Gps.hpp"
 using namespace std;
 
-#define Endpoint_EVT_TIMED		1
-#define Endpoint_EVT_DIST 		2
-#define Endpoint_EVT_OPTO1 		31
-#define Endpoint_EVT_PWRUP 		50
+#define ENDPOINT_EVT_TIMED		1
+#define ENDPOINT_EVT_DIST 		2
+#define ENDPOINT_EVT_OPTO1 		31
+#define ENDPOINT_EVT_PWRUP 		50
 
-#define Endpoint_MSG_SHORT	22
-#define Endpoint_MSG_LONG		51
+#define ENDPOINT_MSG_SHORT	22
+#define ENDPOINT_MSG_LONG		51
 
 /*
 Endpoint standard message

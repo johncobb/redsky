@@ -66,6 +66,7 @@ long Socket::receiveFrom(uint8_t *buffer, int max, endpoint_t *info) {
         info->addr.sin_addr = cliaddr.sin_addr;
         info->addr.sin_port = cliaddr.sin_port;
         info->len = bytes;
+        info->timestamp = clock();
     }
 
 
