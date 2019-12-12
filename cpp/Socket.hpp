@@ -21,7 +21,6 @@
 #include <arpa/inet.h> 
 #include <netinet/in.h> 
 #include <stdint.h> 
-// research netdb.h
 #include <netdb.h>
 
 #define PORT 8080
@@ -29,10 +28,13 @@
 
 using namespace std;
 
+// https://adaickalavan.github.io/programming/udp-socket-programming-in-cpp-and-python/
 typedef struct {
-	uint16_t addr;
-	uint16_t port;
-} socket_connection_t;
+	uint64_t id;
+	sockaddr_in addr;
+	long len;
+} endpoint_t;
+
 
 class Socket {
 	public:
@@ -41,19 +43,24 @@ class Socket {
 		
 		virtual ~Socket();
 		int sockfd;
-		char buffer[BUFFER_SIZE];
+		uint8_t buffer[BUFFER_SIZE];
 		bool initialized;
 		uint8_t socketFamily;
 		uint16_t inAddr;
 		uint16_t port;
 		struct sockaddr_in servaddr;
 		struct sockaddr_in cliaddr;
-		
-		long receive(uint8_t *buffer, unsigned long max_size);
-	
+		long receiveFrom(uint8_t *buffer, int max);
+		long receiveFrom(uint8_t *buffer, int max, endpoint_t *info);
+
+		// TODO: New code
+		// sockaddr_in receiveFrom(uint8_t* buffer, int len, int flags);
+
+		void send(const char* buffer, int len, sockaddr_in addr);
 	private:
 		long send(char *msg);
-
+		void parseHumanReadableIp();
+		
 		double myPrivateMethod() {
 			return 1.0;
 		}
