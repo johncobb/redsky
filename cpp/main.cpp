@@ -81,7 +81,9 @@ int main () {
 			if (ep_info.len > 0) {
 
 				Endpoint ep = Endpoint(msg_buffer, len, &ep_info);
-				ep.parseMessage();
+
+				Enfora msg = Enfora(msg_buffer, len);
+				msg.parse(msg_buffer, len);
 
 				int found = findClientByEndpoint(ep);
 
