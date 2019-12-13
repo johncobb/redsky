@@ -22,8 +22,9 @@
 #include "Socket.hpp"
 #include "EndpointBase.hpp"
 #include "Endpoint.hpp"
-#include "Enfora.hpp"
+// #include "Enfora.hpp"
 #include "Gps.hpp"
+#include "MessageFactory.hpp"
 
 using namespace std;
 
@@ -51,10 +52,14 @@ Socket server;
 vector <EndpointBase> connections;
 
 
+// MessageBase createMessage(MessageFactory::MessageType type);
+
 uint8_t msg_buffer[128] = {0};
 
 int main () {
 	
+
+
 	// runPerformanceTest();
 	// return 0;
 
@@ -108,6 +113,16 @@ int main () {
  
 }
 
+
+
+// Message* createMessage(MessageType type) {
+// 	if (type == TypeEnfora) {
+// 		return new Enfora();
+// 	} else {
+// 		return NULL;
+// 	}
+// }
+
 int findClientByEndpoint(Endpoint endpoint) {
 
 	
@@ -134,8 +149,6 @@ int findClientByEndpoint(Endpoint endpoint) {
 	}
 
 	return index;
-	
-	
 }
 
 void sendUdpResponse(endpoint_t sck_info) {
@@ -145,17 +158,11 @@ void sendUdpResponse(endpoint_t sck_info) {
 
 void runUnitTests() {
 	
-	unitTestEndpointParsing();
 	usleep(100); // let system breath or we will overwrite cout buffer
 	unitTestGpsParsing();
 	
 }
 
-void unitTestEndpointParsing() {
-	uint8_t b[5] = {'H', 'e', 'l', 'l', 'o'};
-	Endpoint e = Endpoint(b, 5);
-	e.parsingTest();
-}
 
 void unitTestGpsParsing() {
 	uint8_t x[5] = {'G', 'P', 'R', 'M', 'C'};

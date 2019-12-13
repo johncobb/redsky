@@ -7,12 +7,29 @@
  * Tweet: @johncobbtweets
  */
 
+#include <iostream>
 #include "Enfora.hpp"
 
-#include <iostream>
-
-
 using namespace std;
+
+/*
+ * 
+ * 
+ * 
+ * https://github.com/johncobb/echobase_sam4e16c/blob/master/src/wan/wan.c
+ * 
+ * Endpoint standard message
+ * len: 51
+ * 
+ * Endpoint powerup message
+ * len: 22
+ * 
+ * header: 	4
+ * parm1: 	4
+ * mdmid: 	8
+ * rtc:		6
+ * 
+*/
 
 Enfora::Enfora() {
     gps = Gps();

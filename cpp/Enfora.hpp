@@ -11,10 +11,9 @@
 #define ENFORA_H
 
 #include <stdint.h> 
+#include "MessageBase.hpp"
 #include "Socket.hpp"
 #include "Gps.hpp"
-
-#define ENFORA_ATMSGSEND = "AT$MSGSND=\"{0}\"\0D\r";
 
 using namespace std;
 
@@ -26,8 +25,10 @@ using namespace std;
 #define ENFORA_MSG_SHORT	22
 #define ENFORA_MSG_LONG		51
 
+#define ENFORA_ATMSGSEND = "AT$MSGSND=\"{0}\"\0D\r";
 
-class Enfora {
+
+class Enfora : public MessageBase {
 
     public:
 

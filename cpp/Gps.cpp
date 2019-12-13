@@ -7,8 +7,8 @@
  * Tweet: @johncobbtweets
  */
 
-#include "Gps.hpp"
 #include <iostream>
+#include "Gps.hpp"
 
 using namespace std;
 
