@@ -7,8 +7,8 @@
  * Tweet: @johncobbtweets
  */
 
-#ifndef EndpointBase_H
-#define EndpointBase_H
+#ifndef ENDPOINTBASE_H
+#define ENDPOINTBASE_H
 
 #include <stdint.h> 
 #include "Socket.hpp"

@@ -13,9 +13,7 @@
 #include <sstream>
 #include <iterator>
 #include <iostream>
-#include <chrono>
 #include <string.h>
-#include <sys/time.h>
 #include <vector>
 #include <iomanip> //setprecision(n)
 
@@ -24,7 +22,9 @@
 #include "Socket.hpp"
 #include "EndpointBase.hpp"
 #include "Endpoint.hpp"
+#include "Enfora.hpp"
 #include "Gps.hpp"
+#include "Message.hpp"
 
 using namespace std;
 
@@ -42,6 +42,7 @@ void runUnitTests();
 void runPerformanceTest();
 
 void sendUdpResponse(endpoint_t sinfo);
+int findClientByEndpoint(Endpoint endpoint);
 
 static clock_t clock_time;
 static clock_t perf_start;
@@ -49,12 +50,17 @@ static clock_t perf_end;
 
 Socket server;
 vector <EndpointBase> connections;
+vector <Message*> _messages;
 
+
+// MessageBase createMessage(MessageFactory::MessageType type);
 
 uint8_t msg_buffer[128] = {0};
 
 int main () {
 	
+
+
 	// runPerformanceTest();
 	// return 0;
 
@@ -72,22 +78,38 @@ int main () {
 		cout << "Buffer size: " << sizeof(server.buffer) << endl;
 
 		while(true) {
-			endpoint_t sck_info;
+			endpoint_t ep_info;
 
-			long len = server.receiveFrom(msg_buffer, BUFFER_SIZE, &sck_info);
+			long len = server.receiveFrom(msg_buffer, BUFFER_SIZE, &ep_info);
 			
 			// cout << "received len: " << len << endl;
 			cout << "log clock: " << clock() << endl;
-			if (sck_info.len > 0) {
+			if (ep_info.len > 0) {
 
-				Endpoint msg = Endpoint(msg_buffer, len, &sck_info);
+				/* create a new endpoint for referencing */
+				Endpoint ep = Endpoint(msg_buffer, len, &ep_info);
+
+				/* try to parse the message, this method returns a pointer
+				   to a new message of type parsed */
+				Message *msg = Message::createMessage(msg_buffer, len);
+
+				/* if we successfully parsed add to vector */
+				if (msg != NULL) {
+					_messages.push_back(msg);
+				}
 				
-				msg.parseMessage();
-				connections.push_back(msg);
-				cout << "log sck id: " << msg.getEndpoint()->id << endl;
+				/* check to see if endpoint exists ip:port */
+				int found = findClientByEndpoint(ep);
 
-				cout << "log connections: " << connections.size() << endl;
-				// sendUdpResponse(sinfo);
+				if (found > -1) {
+					cout << "log sck id: " << ep.getEndpoint()->id << endl;
+					cout << "log connections: " << connections.size() << endl;
+					// sendUdpResponse(sinfo);
+				} else {
+					connections.push_back(ep);
+				}
+
+
 			}
 
 			usleep(100*MICROS_IN_MILLIS); // 100 millis
@@ -100,7 +122,7 @@ int main () {
  
 }
 
-int findClientByEndpoint(sockaddr_in endpoint) {
+int findClientByEndpoint(Endpoint endpoint) {
 
 	
 	// for (auto &m : connections) {
@@ -109,15 +131,23 @@ int findClientByEndpoint(sockaddr_in endpoint) {
 	// 	}
 	// }
 
+	int index = -1;
+
 	for (int i=0; i<connections.size(); i++) {
 		EndpointBase msg = connections[i];
-		cout << msg.getEndpoint()->id << endl;
-		return i;
+
+		if (msg.getEndpoint()->id == endpoint.getEndpoint()->id) {
+			cout << "log found endpoint: " << endpoint.getEndpoint()->id << endl;
+			msg.getEndpoint()->timestamp = endpoint.getEndpoint()->timestamp;
+			msg.getEndpoint()->addr = endpoint.getEndpoint()->addr;
+			msg.getEndpoint()->len = endpoint.getEndpoint()->len;
+			index = i; // we found the endpoint so set the index
+			break;
+		}
+
 	}
 
-	return -1;
-	
-	
+	return index;
 }
 
 void sendUdpResponse(endpoint_t sck_info) {
@@ -127,17 +157,11 @@ void sendUdpResponse(endpoint_t sck_info) {
 
 void runUnitTests() {
 	
-	unitTestEndpointParsing();
 	usleep(100); // let system breath or we will overwrite cout buffer
 	unitTestGpsParsing();
 	
 }
 
-void unitTestEndpointParsing() {
-	uint8_t b[5] = {'H', 'e', 'l', 'l', 'o'};
-	Endpoint e = Endpoint(b, 5);
-	e.parsingTest();
-}
 
 void unitTestGpsParsing() {
 	uint8_t x[5] = {'G', 'P', 'R', 'M', 'C'};

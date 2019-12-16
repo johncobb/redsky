@@ -7,21 +7,22 @@
  * Tweet: @johncobbtweets
  */
 
-#ifndef Endpoint_H
-#define Endpoint_H
+#ifndef ENDPOINT_H
+#define ENDPOINT_H
 
 #include <stdint.h> 
 #include "EndpointBase.hpp"
 #include "Gps.hpp"
+
 using namespace std;
 
-#define Endpoint_EVT_TIMED		1
-#define Endpoint_EVT_DIST 		2
-#define Endpoint_EVT_OPTO1 		31
-#define Endpoint_EVT_PWRUP 		50
+#define ENDPOINT_EVT_TIMED		1
+#define ENDPOINT_EVT_DIST 		2
+#define ENDPOINT_EVT_OPTO1 		31
+#define ENDPOINT_EVT_PWRUP 		50
 
-#define Endpoint_MSG_SHORT	22
-#define Endpoint_MSG_LONG		51
+#define ENDPOINT_MSG_SHORT	22
+#define ENDPOINT_MSG_LONG		51
 
 /*
 Endpoint standard message
@@ -45,23 +46,7 @@ class Endpoint : public EndpointBase {
 		uint16_t addr;
 		uint16_t port;
 		bool initialized;
-		Gps gps;
 
-		uint32_t header;
-		uint32_t event_type;
-		uint8_t modem_id[8];
-		uint64_t rtc;
-		uint8_t iocfg;
-		uint8_t iogpio;
-		uint8_t event_cat;
-		uint32_t odometer;
-		// uint32_t notifyType; // not yet implemented (tbd)
-
-		uint64_t parseEndpointId();
-		void parseMessage();
-		void parseMessage(uint8_t *data);
-        void parse();
-		void parsingTest();
 
 		// double myPublicMethod() {
 		// 	return 3.0;
@@ -69,8 +54,6 @@ class Endpoint : public EndpointBase {
 
 	private:
 
-		void parseMessageShort(uint8_t *data);
-		void parseMessageLong(uint8_t *data);
 		void logMessageBuffer(uint8_t *data, unsigned long len);
 		
 		double myPrivateMethod() {

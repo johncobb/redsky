@@ -23,16 +23,17 @@
 #include <stdint.h> 
 #include <netdb.h>
 
+using namespace std;
+
 #define PORT 8080
 #define BUFFER_SIZE 128
-
-using namespace std;
 
 // https://adaickalavan.github.io/programming/udp-socket-programming-in-cpp-and-python/
 typedef struct {
 	uint64_t id;
 	sockaddr_in addr;
 	long len;
+	clock_t timestamp;
 } endpoint_t;
 
 

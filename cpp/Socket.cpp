@@ -7,8 +7,9 @@
  * Tweet: @johncobbtweets
  */
 
-#include "Socket.hpp"
 #include <iostream>
+#include "Socket.hpp"
+
 
 using namespace std;
 
@@ -66,6 +67,7 @@ long Socket::receiveFrom(uint8_t *buffer, int max, endpoint_t *info) {
         info->addr.sin_addr = cliaddr.sin_addr;
         info->addr.sin_port = cliaddr.sin_port;
         info->len = bytes;
+        info->timestamp = clock();
     }
 
 
@@ -75,7 +77,7 @@ long Socket::receiveFrom(uint8_t *buffer, int max, endpoint_t *info) {
 
 
 
-
+// todo: research returning from function vs passing argument
 // sockaddr_in Socket::receiveFrom(uint8_t* buffer, int max, int flags) {
 //     socklen_t len;
 //     sockaddr_in from;
