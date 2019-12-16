@@ -22,9 +22,9 @@
 #include "Socket.hpp"
 #include "EndpointBase.hpp"
 #include "Endpoint.hpp"
-// #include "Enfora.hpp"
+#include "Enfora.hpp"
 #include "Gps.hpp"
-#include "MessageFactory.hpp"
+#include "Message.hpp"
 
 using namespace std;
 
@@ -50,6 +50,7 @@ static clock_t perf_end;
 
 Socket server;
 vector <EndpointBase> connections;
+vector <Message*> _messages;
 
 
 // MessageBase createMessage(MessageFactory::MessageType type);
@@ -87,8 +88,12 @@ int main () {
 
 				Endpoint ep = Endpoint(msg_buffer, len, &ep_info);
 
+
 				Enfora msg = Enfora(msg_buffer, len);
 				msg.parse(msg_buffer, len);
+
+				_messages.push_back(Message::createMessage(1));
+
 
 				int found = findClientByEndpoint(ep);
 
