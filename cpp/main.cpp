@@ -86,15 +86,19 @@ int main () {
 			cout << "log clock: " << clock() << endl;
 			if (ep_info.len > 0) {
 
+				/* create a new endpoint for referencing */
 				Endpoint ep = Endpoint(msg_buffer, len, &ep_info);
 
+				/* try to parse the message, this method returns a pointer
+				   to a new message of type parsed */
+				Message *msg = Message::createMessage(msg_buffer, len);
 
-				Enfora msg = Enfora(msg_buffer, len);
-				msg.parse(msg_buffer, len);
-
-				_messages.push_back(Message::createMessage(1));
-
-
+				/* if we successfully parsed add to vector */
+				if (msg != NULL) {
+					_messages.push_back(msg);
+				}
+				
+				/* check to see if endpoint exists ip:port */
 				int found = findClientByEndpoint(ep);
 
 				if (found > -1) {
@@ -117,16 +121,6 @@ int main () {
 	}
  
 }
-
-
-
-// Message* createMessage(MessageType type) {
-// 	if (type == TypeEnfora) {
-// 		return new Enfora();
-// 	} else {
-// 		return NULL;
-// 	}
-// }
 
 int findClientByEndpoint(Endpoint endpoint) {
 

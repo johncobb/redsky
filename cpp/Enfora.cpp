@@ -38,6 +38,10 @@ Enfora::Enfora() {
 
 Enfora::Enfora(uint8_t *data, unsigned long len):data(data), len(len) {
 	identify(data, len);
+	/* log server time */
+	timestamp = clock();
+	/* parse data from message */
+	parse(data, len);
 }
 
 
@@ -65,6 +69,7 @@ uint64_t Enfora::identify(uint8_t *data, unsigned long len) {
 void Enfora::parse(uint8_t *data, unsigned long len) {
     logMessageBuffer(data, len);
 
+
 	header = (((unsigned long)data[0]) << 24) | (((unsigned long)data[1]) << 16) | (((unsigned long)data[2]) << 8) | (unsigned long)data[3];
 	event_type = (((unsigned long)data[4]) << 24) | (((unsigned long)data[5]) << 16) | (((unsigned long)data[6]) << 8) | (unsigned long)data[7];
 	modem_id[0] = data[8];
@@ -76,6 +81,7 @@ void Enfora::parse(uint8_t *data, unsigned long len) {
 	modem_id[6] = data[14];
 	modem_id[7] = data[15];
 	
+	cout << "log queue_complete: " << queue_complete << endl;
 	printf("log msg-header: %u\r\n", header);
 	printf("log msg-type: %u\r\n", event_type);
 	printf("log modem-id: %s\r\n", modem_id);
@@ -159,5 +165,5 @@ void Enfora::parsingTest() {
 
 
 Enfora::~Enfora() {
-
+	cout << "Enfora::~Enfora" << endl;
 }

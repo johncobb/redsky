@@ -11,10 +11,24 @@
 #ifndef MESSAGE_H
 #define MESSAGE_H
 
+enum MessageType {
+    TUnknown, TEnfora, TCalAmp, TAntx
+};
+
 class Message {
     public:
-        static Message *createMessage(int type);
 
+        Message();
+
+        clock_t timestamp;
+        bool queue_complete;
+
+        static Message *createMessage(uint8_t *data, unsigned long len);
+
+
+    protected:
+
+        static MessageType identify(uint8_t *data, unsigned long len);
         
 
 };
