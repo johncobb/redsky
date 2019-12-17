@@ -11,6 +11,7 @@
 #include "Message.hpp"
 #include "Enfora.hpp"
 
+
 using namespace std;
 
 Message::Message() {
@@ -30,6 +31,34 @@ Message* Message::createMessage(uint8_t *data, unsigned long len) {
         cout << "createMessage Unknown" << endl;
     }
     return NULL;
+}
+
+// Message* Message::createMessage(uint8_t *data, unsigned long len, endpoint_t *target) {
+    
+//     Message *msg = NULL;
+
+//     msg = Message::createMessage(data, len);
+
+//     if (msg != NULL) {
+//         /* we need to record the client id parsed form the valid message */
+//         target->id = msg->id;
+//     }
+    
+//     return msg;
+// }
+
+Message* Message::createMessage(uint8_t *data, unsigned long len, Endpoint *target) {
+    
+    Message *msg = NULL;
+
+    msg = Message::createMessage(data, len);
+
+    if (msg != NULL) {
+        /* we need to record the client id parsed form the valid message */
+        target->clientId = msg->id;
+    }
+    
+    return msg;
 }
 
 MessageType Message::identify(uint8_t *data, unsigned long len) {

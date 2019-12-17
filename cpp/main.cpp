@@ -91,23 +91,27 @@ int main () {
 
 			long len = server.receiveFrom(msg_buffer, BUFFER_SIZE, &ep_info);
 			
+			/* create a new endpoint for referencing */
+			Endpoint *ep = Endpoint::createEndpoint(msg_buffer, len, &ep_info);
+
 			// cout << "received len: " << len << endl;
 			cout << "log clock: " << clock() << endl;
 			if (ep_info.len > 0) {
 
 				/* try to parse the message, this method returns a pointer
 				   to a new message of type parsed */
-				Message *msg = Message::createMessage(msg_buffer, len);
-
+				// Message *msg = Message::createMessage(msg_buffer, len);
+				// Message *msg = Message::createMessage(msg_buffer, len, &ep_info);
+				Message *msg = Message::createMessage(msg_buffer, len, ep);
+				// ep->setEndpoint(&ep_info);
 				/* if we successfully parsed add to vector */
 				if (msg != NULL) {
+					// ep->clientId = msg->id;
 					_messages.push_back(msg);
 				}
 
-				/* create a new endpoint for referencing */
-				Endpoint *ep = Endpoint::createEndpoint(msg_buffer, len, &ep_info);
 
-				cout << "log sck id: " << ep->getEndpoint()->id << endl;
+				cout << "log endpoint clientId: " << ep->clientId << endl;
 				cout << "log endpoints: " << Endpoint::endpoints.size() << endl;
 
 			}

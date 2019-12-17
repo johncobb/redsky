@@ -40,7 +40,7 @@ class Enfora : public Message {
         uint8_t *data; // data buffer returned from socket
         unsigned long len; // data buffer length
         uint8_t ver; // message version
-        uint64_t id; // message identifier
+        // uint64_t id; // message identifier
         
         Gps gps;
         uint32_t header;

@@ -48,6 +48,7 @@ Endpoint* Endpoint::createEndpoint(uint8_t *data, unsigned long len, endpoint_t 
 	return endpoint;
 }
 
+
 /*
  * try to identify the incoming connection endpoint. if we have
  * a record of the endpoint update it otherwise we will create 
@@ -65,10 +66,15 @@ Endpoint* Endpoint::identify(endpoint_t *target) {
 		/* if the device/message id matches the target endpoint device/message id
 		 * we have a match.
 		 */
-		if (ep->getEndpoint()->id == target->id) {
+		// if (ep->getEndpoint()->id == target->id) {
+		// 	cout << "log found endpoint: " << ep->getEndpoint()->id << endl;
+		// 	return ep;
+		// }
+
+		if (ep->clientId == target->id) {
 			cout << "log found endpoint: " << ep->getEndpoint()->id << endl;
 			return ep;
-		}
+		}		
 	}
 
 	/* otherwise return a null pointer */
