@@ -15,13 +15,17 @@ using namespace std;
 
 Message::Message() {
     queue_complete = false;
-};
+}
 
 Message* Message::createMessage(uint8_t *data, unsigned long len) {
     
+    Message *msg = NULL;
+
     MessageType type = identify(data, len);
     if (type == TEnfora) {
-        return new Enfora(data, len);
+        msg = new Enfora(data, len);
+        return msg;
+        // return new Enfora(data, len);
     } else {
         cout << "createMessage Unknown" << endl;
     }

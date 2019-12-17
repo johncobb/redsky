@@ -40,6 +40,7 @@ void unitTestEndpointParsing();
 void unitTestGpsParsing();
 void runUnitTests();
 void runPerformanceTest();
+void runChronoPerformanceTest();
 
 void sendUdpResponse(endpoint_t sinfo);
 int findClientByEndpoint(Endpoint endpoint);
@@ -49,11 +50,19 @@ static clock_t perf_start;
 static clock_t perf_end;
 
 Socket server;
-vector <EndpointBase> connections;
+// vector <EndpointBase> connections;
+// vector <Endpoint*> _endpoints;
 vector <Message*> _messages;
 
 
-// MessageBase createMessage(MessageFactory::MessageType type);
+/*
+ * incoming device-messages may arrive on different ports each time the server
+ * receives them. it is important to track the device-message by id and associate ip address and port
+ * of message arrival. this allows us to manage the endpoint for each device-message in the event
+ * the server needs to transmit a reply. this also allows the server to prune stale connections that
+ * have exceeded the timeout threshold.
+ * 
+ */
 
 uint8_t msg_buffer[128] = {0};
 
@@ -86,9 +95,6 @@ int main () {
 			cout << "log clock: " << clock() << endl;
 			if (ep_info.len > 0) {
 
-				/* create a new endpoint for referencing */
-				Endpoint ep = Endpoint(msg_buffer, len, &ep_info);
-
 				/* try to parse the message, this method returns a pointer
 				   to a new message of type parsed */
 				Message *msg = Message::createMessage(msg_buffer, len);
@@ -97,18 +103,12 @@ int main () {
 				if (msg != NULL) {
 					_messages.push_back(msg);
 				}
-				
-				/* check to see if endpoint exists ip:port */
-				int found = findClientByEndpoint(ep);
 
-				if (found > -1) {
-					cout << "log sck id: " << ep.getEndpoint()->id << endl;
-					cout << "log connections: " << connections.size() << endl;
-					// sendUdpResponse(sinfo);
-				} else {
-					connections.push_back(ep);
-				}
+				/* create a new endpoint for referencing */
+				Endpoint *ep = Endpoint::createEndpoint(msg_buffer, len, &ep_info);
 
+				cout << "log sck id: " << ep->getEndpoint()->id << endl;
+				cout << "log endpoints: " << Endpoint::endpoints.size() << endl;
 
 			}
 
@@ -122,33 +122,26 @@ int main () {
  
 }
 
-int findClientByEndpoint(Endpoint endpoint) {
+// int findClientByEndpoint(Endpoint endpoint) {
 
-	
-	// for (auto &m : connections) {
-	// 	if (m.getEndpoint()->len == 0) {
-	// 		cout << "we found the connection" << endl;
-	// 	}
-	// }
+// 	int index = -1;
 
-	int index = -1;
+// 	for (int i=0; i<connections.size(); i++) {
+// 		EndpointBase msg = connections[i];
 
-	for (int i=0; i<connections.size(); i++) {
-		EndpointBase msg = connections[i];
+// 		if (msg.getEndpoint()->id == endpoint.getEndpoint()->id) {
+// 			cout << "log found endpoint: " << endpoint.getEndpoint()->id << endl;
+// 			msg.getEndpoint()->timestamp = endpoint.getEndpoint()->timestamp;
+// 			msg.getEndpoint()->addr = endpoint.getEndpoint()->addr;
+// 			msg.getEndpoint()->len = endpoint.getEndpoint()->len;
+// 			index = i; // we found the endpoint so set the index
+// 			break;
+// 		}
 
-		if (msg.getEndpoint()->id == endpoint.getEndpoint()->id) {
-			cout << "log found endpoint: " << endpoint.getEndpoint()->id << endl;
-			msg.getEndpoint()->timestamp = endpoint.getEndpoint()->timestamp;
-			msg.getEndpoint()->addr = endpoint.getEndpoint()->addr;
-			msg.getEndpoint()->len = endpoint.getEndpoint()->len;
-			index = i; // we found the endpoint so set the index
-			break;
-		}
+// 	}
 
-	}
-
-	return index;
-}
+// 	return index;
+// }
 
 void sendUdpResponse(endpoint_t sck_info) {
 	string cmd_at = "AT$MSGSND=0,\"AT\0D\"";
@@ -176,6 +169,7 @@ void unitTestGpsParsing() {
 void runPerformanceTest() {
 	// https://www.geeksforgeeks.org/measure-execution-time-with-high-precision-in-c-c/
 	perf_start = clock();
+
 	for (int i=0; i<1000; i++) {
 		int x = 0;
 	}
@@ -187,3 +181,20 @@ void runPerformanceTest() {
          << time_taken << setprecision(5); 
     cout << " sec " << endl; 
 }
+
+
+
+// void runChronoPerformanceTest() {
+
+// 	// using namespace std::literals::chrono_literals;
+// 	auto perf_start = std::chrono::high_resolution_clock::now();
+
+// 	for (int i=0; i<1000; i++) {
+// 		int x = 0;
+// 	}
+
+// 	auto perf_end = std::chrono::high_resolution_clock::now();
+
+// 	std::chrono::duration<float> lapse = perf_end - perf_start;
+// 	cout << "chrono duration: " << lapse.count() << "s " << endl;
+// }
