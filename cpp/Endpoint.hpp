@@ -11,6 +11,7 @@
 #define ENDPOINT_H
 
 #include <stdint.h> 
+#include <vector>
 #include "EndpointBase.hpp"
 #include "Gps.hpp"
 
@@ -46,11 +47,23 @@ class Endpoint : public EndpointBase {
 		uint16_t addr;
 		uint16_t port;
 		bool initialized;
+		uint64_t clientId;
 
+		sockaddr_in clientAddr;
+
+		clock_t timestamp;
+
+		static vector <Endpoint*> endpoints;
+		static Endpoint *createEndpoint(uint8_t *data, unsigned long len, endpoint_t *target);
+
+		static Endpoint *identify(endpoint_t *target);
 
 		// double myPublicMethod() {
 		// 	return 3.0;
 		// }
+	protected:
+		
+	
 
 	private:
 

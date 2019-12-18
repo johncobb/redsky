@@ -19,9 +19,6 @@ class EndpointBase {
 
 
 	public:
-		// todo: research initializer list for base class
-		// EndpointBase();
-		// EndpointBase(endpoint_t *info);
 
 		endpoint_t * getEndpoint() {
 			return endpoint;
@@ -32,7 +29,7 @@ class EndpointBase {
 			return 2.0;
 		}
 
-	protected:
+	// protected:
 		endpoint_t *endpoint;
 
 		void setEndpoint(endpoint_t *info) {

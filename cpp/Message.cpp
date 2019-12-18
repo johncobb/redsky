@@ -11,21 +11,43 @@
 #include "Message.hpp"
 #include "Enfora.hpp"
 
+
 using namespace std;
 
 Message::Message() {
     queue_complete = false;
-};
+}
 
 Message* Message::createMessage(uint8_t *data, unsigned long len) {
     
+    Message *msg = NULL;
+
     MessageType type = identify(data, len);
     if (type == TEnfora) {
-        return new Enfora(data, len);
+        msg = new Enfora(data, len);
+        return msg;
+        // return new Enfora(data, len);
     } else {
         cout << "createMessage Unknown" << endl;
     }
     return NULL;
+}
+
+Message* Message::createMessage(uint8_t *data, unsigned long len, Endpoint *target) {
+    
+    Message *msg = NULL;
+
+    msg = Message::createMessage(data, len);
+
+    if (msg != NULL) {
+        /* log server time */
+        msg->timestamp = clock();    
+        /* we need to record the client id parsed form the valid message */
+        target->clientId = msg->id;
+
+    }
+    
+    return msg;
 }
 
 MessageType Message::identify(uint8_t *data, unsigned long len) {
