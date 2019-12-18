@@ -27,7 +27,6 @@ class Message {
         bool queue_complete;
 
         static Message *createMessage(uint8_t *data, unsigned long len);
-        // static Message *createMessage(uint8_t *data, unsigned long len, endpoint_t *target);
         static Message *createMessage(uint8_t *data, unsigned long len, Endpoint *target);
 
 

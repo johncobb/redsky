@@ -37,9 +37,11 @@ Enfora::Enfora() {
 
 
 Enfora::Enfora(uint8_t *data, unsigned long len):data(data), len(len) {
+	/* parse the message identify encoded in the payload.
+	   this will be used to identify the message as well as the 
+	   endpoint from which the message arrived. */
 	identify(data, len);
-	/* log server time */
-	timestamp = clock();
+
 	/* parse data from message */
 	parse(data, len);
 }

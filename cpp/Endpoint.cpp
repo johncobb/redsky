@@ -25,7 +25,6 @@ Endpoint::Endpoint(uint8_t *data, unsigned long len):data(data), len(len) {
 Endpoint::Endpoint(uint8_t *data, unsigned long len, endpoint_t *endpoint):data(data), len(len) {
 
 	setEndpoint(endpoint);
-
 }
 
 
@@ -36,12 +35,15 @@ Endpoint* Endpoint::createEndpoint(uint8_t *data, unsigned long len, endpoint_t 
 
 	/* we found so return */
 	if (endpoint != NULL) {
+		/* log server time */
+		endpoint->timestamp = clock();
 		return endpoint;
 	} 
 
 	/* no endpoint found so return a new one */
 	endpoint = new Endpoint(data, len, target);
-
+	/* log server time */
+	endpoint->timestamp = clock();
 	/* add new endpoint to the vector for future reference */
 	Endpoint::endpoints.push_back(endpoint);
 
@@ -66,11 +68,6 @@ Endpoint* Endpoint::identify(endpoint_t *target) {
 		/* if the device/message id matches the target endpoint device/message id
 		 * we have a match.
 		 */
-		// if (ep->getEndpoint()->id == target->id) {
-		// 	cout << "log found endpoint: " << ep->getEndpoint()->id << endl;
-		// 	return ep;
-		// }
-
 		if (ep->clientId == target->id) {
 			cout << "log found endpoint: " << ep->getEndpoint()->id << endl;
 			return ep;

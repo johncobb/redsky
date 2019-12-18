@@ -17,7 +17,6 @@
 #include <vector>
 #include <iomanip> //setprecision(n)
 
-
 #include "Platform.hpp"
 #include "Socket.hpp"
 #include "EndpointBase.hpp"
@@ -28,7 +27,7 @@
 
 using namespace std;
 
-#define PI 3.14159
+#define PI 3.14159 /* pi always comes in handy */
 #define UDP_PORT 1721
 #define MICROS_IN_MILLIS 1000
 #define MILLIS_IN_SECONDS 1000
@@ -100,20 +99,20 @@ int main () {
 
 				/* try to parse the message, this method returns a pointer
 				   to a new message of type parsed */
-				// Message *msg = Message::createMessage(msg_buffer, len);
-				// Message *msg = Message::createMessage(msg_buffer, len, &ep_info);
 				Message *msg = Message::createMessage(msg_buffer, len, ep);
-				// ep->setEndpoint(&ep_info);
+
 				/* if we successfully parsed add to vector */
 				if (msg != NULL) {
 					// ep->clientId = msg->id;
 					_messages.push_back(msg);
 				}
 
-
-				cout << "log endpoint clientId: " << ep->clientId << endl;
+				/* log some interesting info :p */
 				cout << "log endpoints: " << Endpoint::endpoints.size() << endl;
-
+				cout << "log endpoint clientId: " << ep->clientId << endl;
+				cout << "log endpoint time: " << ep->timestamp << endl;
+				cout << "log message time: " << msg->timestamp << endl;
+				
 			}
 
 			usleep(100*MICROS_IN_MILLIS); // 100 millis
@@ -125,27 +124,6 @@ int main () {
 	}
  
 }
-
-// int findClientByEndpoint(Endpoint endpoint) {
-
-// 	int index = -1;
-
-// 	for (int i=0; i<connections.size(); i++) {
-// 		EndpointBase msg = connections[i];
-
-// 		if (msg.getEndpoint()->id == endpoint.getEndpoint()->id) {
-// 			cout << "log found endpoint: " << endpoint.getEndpoint()->id << endl;
-// 			msg.getEndpoint()->timestamp = endpoint.getEndpoint()->timestamp;
-// 			msg.getEndpoint()->addr = endpoint.getEndpoint()->addr;
-// 			msg.getEndpoint()->len = endpoint.getEndpoint()->len;
-// 			index = i; // we found the endpoint so set the index
-// 			break;
-// 		}
-
-// 	}
-
-// 	return index;
-// }
 
 void sendUdpResponse(endpoint_t sck_info) {
 	string cmd_at = "AT$MSGSND=0,\"AT\0D\"";
