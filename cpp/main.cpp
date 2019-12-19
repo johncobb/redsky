@@ -49,8 +49,7 @@ static clock_t perf_start;
 static clock_t perf_end;
 
 Socket server;
-// vector <EndpointBase> connections;
-// vector <Endpoint*> _endpoints;
+
 vector <Message*> _messages;
 
 
@@ -80,6 +79,18 @@ int main () {
 	try {
 
 		server = Socket(UDP_PORT);
+		server.enableSelect();
+
+		// while (true) {
+		// 	endpoint_t epi;
+		// 	long len = server.receiveFromSelect(msg_buffer, BUFFER_SIZE, &epi);
+
+		// 	if (len > 0) {
+		// 		cout << "we received data." << endl;
+		// 	}
+
+		// 	usleep(100*MICROS_IN_MILLIS); // 100 millis
+		// }
 
 		cout << "Socket listeneing on port: " << server.port << endl;
 		cout << "Initialized: " << server.initialized << endl;
@@ -88,7 +99,8 @@ int main () {
 		while(true) {
 			endpoint_t ep_info;
 
-			long len = server.receiveFrom(msg_buffer, BUFFER_SIZE, &ep_info);
+			// long len = server.receiveFrom(msg_buffer, BUFFER_SIZE, &ep_info);
+			long len = server.receiveFromSelect(msg_buffer, BUFFER_SIZE, &ep_info);
 			
 			/* create a new endpoint for referencing */
 			Endpoint *ep = Endpoint::createEndpoint(msg_buffer, len, &ep_info);
@@ -111,9 +123,10 @@ int main () {
 				cout << "log endpoints: " << Endpoint::endpoints.size() << endl;
 				cout << "log endpoint clientId: " << ep->clientId << endl;
 				cout << "log endpoint time: " << ep->timestamp << endl;
-				cout << "log message time: " << msg->timestamp << endl;
+				// cout << "log message time: " << msg->timestamp << endl;
 				
 			}
+
 
 			usleep(100*MICROS_IN_MILLIS); // 100 millis
 		}

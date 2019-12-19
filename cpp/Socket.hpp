@@ -43,6 +43,7 @@ class Socket {
 		Socket(uint16_t port);
 		
 		virtual ~Socket();
+		
 		int sockfd;
 		uint8_t buffer[BUFFER_SIZE];
 		bool initialized;
@@ -53,6 +54,11 @@ class Socket {
 		struct sockaddr_in cliaddr;
 		long receiveFrom(uint8_t *buffer, int max);
 		long receiveFrom(uint8_t *buffer, int max, endpoint_t *info);
+		long receiveFromSelect(uint8_t *buffer, int max, endpoint_t *info);
+
+		/* select api members */
+		fd_set master;
+		void enableSelect();
 
 		// TODO: New code
 		// sockaddr_in receiveFrom(uint8_t* buffer, int len, int flags);
