@@ -31,6 +31,7 @@ using namespace std;
 // https://adaickalavan.github.io/programming/udp-socket-programming-in-cpp-and-python/
 typedef struct {
 	uint64_t id;
+	int sockfd; /* used for select api only */
 	sockaddr_in addr;
 	long len;
 	clock_t timestamp;
