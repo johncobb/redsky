@@ -53,6 +53,9 @@ Socket server;
 vector <Message*> _messages;
 
 
+void runner_socketselectapi(Socket server);
+
+
 /*
  * incoming device-messages may arrive on different ports each time the server
  * receives them. it is important to track the device-message by id and associate ip address and port
@@ -79,18 +82,9 @@ int main () {
 	try {
 
 		server = Socket(UDP_PORT);
-		server.enableSelect();
 
-		// while (true) {
-		// 	endpoint_t epi;
-		// 	long len = server.receiveFromSelect(msg_buffer, BUFFER_SIZE, &epi);
-
-		// 	if (len > 0) {
-		// 		cout << "we received data." << endl;
-		// 	}
-
-		// 	usleep(100*MICROS_IN_MILLIS); // 100 millis
-		// }
+		// todo: uncomment following lines to enable and test select api
+		// runner_socketselectapi(server);
 
 		cout << "Socket listeneing on port: " << server.port << endl;
 		cout << "Initialized: " << server.initialized << endl;
@@ -99,8 +93,8 @@ int main () {
 		while(true) {
 			endpoint_t ep_info;
 
-			// long len = server.receiveFrom(msg_buffer, BUFFER_SIZE, &ep_info);
-			long len = server.receiveFromSelect(msg_buffer, BUFFER_SIZE, &ep_info);
+			long len = server.receiveFrom(msg_buffer, BUFFER_SIZE, &ep_info);
+			// long len = server.receiveFromSelect(msg_buffer, BUFFER_SIZE, &ep_info);
 			
 			/* create a new endpoint for referencing */
 			Endpoint *ep = Endpoint::createEndpoint(msg_buffer, len, &ep_info);
@@ -141,6 +135,26 @@ int main () {
 void sendUdpResponse(endpoint_t sck_info) {
 	string cmd_at = "AT$MSGSND=0,\"AT\0D\"";
 	server.send(cmd_at.c_str(), cmd_at.size(), sck_info.addr);
+}
+
+/*
+ * todo: explore moving socket select into its own
+ * socket class for better modularity
+ */
+void runner_socketselectapi(Socket server) {
+
+	server.enableSelect();
+
+	while (true) {
+		endpoint_t epi;
+		long len = server.receiveFromSelect(msg_buffer, BUFFER_SIZE, &epi);
+
+		if (len > 0) {
+			cout << "we received data." << endl;
+		}
+
+		usleep(100*MICROS_IN_MILLIS); // 100 millis
+	}
 }
 
 void runUnitTests() {
