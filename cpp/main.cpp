@@ -49,9 +49,11 @@ static clock_t perf_start;
 static clock_t perf_end;
 
 Socket server;
-// vector <EndpointBase> connections;
-// vector <Endpoint*> _endpoints;
+
 vector <Message*> _messages;
+
+
+void runner_socketselectapi(Socket server);
 
 
 /*
@@ -81,6 +83,9 @@ int main () {
 
 		server = Socket(UDP_PORT);
 
+		// todo: uncomment following lines to enable and test select api
+		// runner_socketselectapi(server);
+
 		cout << "Socket listeneing on port: " << server.port << endl;
 		cout << "Initialized: " << server.initialized << endl;
 		cout << "Buffer size: " << sizeof(server.buffer) << endl;
@@ -89,6 +94,7 @@ int main () {
 			endpoint_t ep_info;
 
 			long len = server.receiveFrom(msg_buffer, BUFFER_SIZE, &ep_info);
+			// long len = server.receiveFromSelect(msg_buffer, BUFFER_SIZE, &ep_info);
 			
 			/* create a new endpoint for referencing */
 			Endpoint *ep = Endpoint::createEndpoint(msg_buffer, len, &ep_info);
@@ -111,9 +117,10 @@ int main () {
 				cout << "log endpoints: " << Endpoint::endpoints.size() << endl;
 				cout << "log endpoint clientId: " << ep->clientId << endl;
 				cout << "log endpoint time: " << ep->timestamp << endl;
-				cout << "log message time: " << msg->timestamp << endl;
+				// cout << "log message time: " << msg->timestamp << endl;
 				
 			}
+
 
 			usleep(100*MICROS_IN_MILLIS); // 100 millis
 		}
@@ -128,6 +135,26 @@ int main () {
 void sendUdpResponse(endpoint_t sck_info) {
 	string cmd_at = "AT$MSGSND=0,\"AT\0D\"";
 	server.send(cmd_at.c_str(), cmd_at.size(), sck_info.addr);
+}
+
+/*
+ * todo: explore moving socket select into its own
+ * socket class for better modularity
+ */
+void runner_socketselectapi(Socket server) {
+
+	server.enableSelect();
+
+	while (true) {
+		endpoint_t epi;
+		long len = server.receiveFromSelect(msg_buffer, BUFFER_SIZE, &epi);
+
+		if (len > 0) {
+			cout << "we received data." << endl;
+		}
+
+		usleep(100*MICROS_IN_MILLIS); // 100 millis
+	}
 }
 
 void runUnitTests() {

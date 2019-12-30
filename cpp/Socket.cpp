@@ -8,6 +8,8 @@
  */
 
 #include <iostream>
+#include <sys/types.h>
+#include <sys/select.h>
 #include "Socket.hpp"
 
 
@@ -42,6 +44,70 @@ Socket::Socket(uint16_t port):port(port)  {
 	}
 
     initialized = true;
+}
+
+void Socket::enableSelect() {
+    FD_ZERO(&master);
+    FD_SET(sockfd, &master);
+}
+
+long Socket::receiveFromSelect(uint8_t *buffer, int max, endpoint_t *info) {
+
+    /*
+     * keep an array of socket connections as they come in from the recvfrom method.
+     * loop through the array to determine if the current connection is on the
+     * listening socket (sockfd). if we are on the listening socket we need to add it
+     * to the array of connections as this is an incoming message. 
+     * 
+     */
+    long bytes = 0;
+
+    /* research references: */
+    /* https://www.mkssoftware.com/docs/man3/select.3.asp */
+    /* https://www.geeksforgeeks.org/tcp-and-udp-server-using-select/ */
+    /* https://www.youtube.com/watch?v=dquxuXeZXgo&t=929s */
+    /* https://www.binarytides.com/multiple-socket-connections-fdset-select-linux/ */
+
+
+    /* 
+     * The select() function indicates which of the specified file descriptors is ready for 
+     * reading, ready for writing, or has an error condition pending. If the specified condition 
+     * is false for all of the specified file descriptors, select() blocks, up to the specified 
+     * timeout interval, until the specified condition is true for at least one of the specified file 
+     * descriptors or until a signal arrives that needs to be delivered.
+     * 
+     */
+    int select_val = select(sockfd+1, &master, nullptr, nullptr, nullptr);
+
+    /* select_val 0: timeout select_val -1: error */
+    if (select_val > 0) {
+        socklen_t len;
+
+        // reset buffer
+        memset(buffer, 0, max);
+        
+
+        bytes = (long) recvfrom(sockfd, buffer, max, MSG_WAITALL, ( struct sockaddr *) &cliaddr, &len);
+
+        if (bytes < 0) {
+            throw "Socket recvfromselect failed.";
+        }  
+
+        if (info != NULL) {
+            info->addr.sin_addr = cliaddr.sin_addr;
+            info->addr.sin_port = cliaddr.sin_port;
+            info->len = bytes;
+            info->timestamp = clock();
+        }
+
+    } else if (select_val == 0) {
+        throw "Socket receivefrom timeout.";
+    } else if (select_val == -1) {
+        cout << "Socket receivefrom error: " << errno << endl;
+        throw "Socket error. ";
+    }
+
+    return bytes;  
 }
 
 // using this receiveFrom prevents us from sending a response
